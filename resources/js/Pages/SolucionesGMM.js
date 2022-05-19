@@ -32,6 +32,7 @@ const SolucionesGMM = ({edades, sexos, propuestas, ...props}) => {
   const opsTipoSiniestroEj = ["Accidente", "Enfermedad"]
   const opsDeducibleEj = !infoPropuesta ? [0] : infoPropuesta[0].precios?.map(precio => precio.monto_deducible)
   const opsHospitalEj = []
+  
   //Popula el array de opciones hospital con la info para cada uno: nombre, coaseguro aplicado y tope coaseguro.
   !infoPropuesta ? opsHospitalEj.push(false) : infoPropuesta[0].planes?.map( plan => { 
     const regex = /([\d]{1,2})\%/
@@ -48,6 +49,9 @@ const SolucionesGMM = ({edades, sexos, propuestas, ...props}) => {
   const [deducibleEj, poneDeducibleEj] = useState(false)
   const [hospitalEj, poneHospitalEj] = useState()
   const [montoSiniestroEj, poneMontoSiniestroEj] = useState(Intl.NumberFormat("es-MX", {style: "decimal"}).format(100000))
+
+  //Declara la variable para mostrar u ocultar los padecimientos con periodo de espera
+  const [muestraPadecimientos, poneMuestraPadecimientos] = useState(false)
 
   //Para los botones de Aseguradoras que cambian la propuesta
   const cambiaAseguradora = (aseguradora) => {
@@ -218,12 +222,6 @@ const SolucionesGMM = ({edades, sexos, propuestas, ...props}) => {
             </div>
           </div>
           <div className="my-5">
-            <h2 className="text-2xl text-azul-50 px-5 py-2 mb-2 bg-azul">Enfermedades con Periodo de Espera</h2>
-            <div>
-              <PadecimientosEspera datos={infoPropuesta[0].padecimientos_espera} />
-            </div>
-          </div>
-          <div className="my-5">
             <h2 className="text-2xl text-azul-50 px-5 py-2 mb-2 bg-azul">Ejemplos de Cómo Funciona el Seguro de Gastos Médicos Mayores con {aseguradora}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4" >
               <div className="flex flex-col-reverse md:flex-col">
@@ -275,6 +273,19 @@ const SolucionesGMM = ({edades, sexos, propuestas, ...props}) => {
                 />
               </div>
             </div>
+          </div>
+          <div className="my-5">
+            <h2 
+              onClick={ () => { poneMuestraPadecimientos(!muestraPadecimientos) } } 
+              className="text-2xl text-azul-50 px-5 py-2 mb-2 bg-azul cursor-pointer"
+            >
+              Enfermedades con Periodo de Espera <span className="text-sm text-azul-300">--- Click Para { muestraPadecimientos ? "Ocultar" : "Ver" } ---</span>
+              </h2>
+            { muestraPadecimientos && 
+              <div>
+                <PadecimientosEspera datos={infoPropuesta[0].padecimientos_espera} />
+              </div>
+            }
           </div>
         </div>
       </Seccion>
